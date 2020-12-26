@@ -123,7 +123,7 @@ class RedisStore {
    */
 
   del(key, fn = noop) {
-    this.client.del(`${this.prefix}${key}`, fn)
+    this.client.unlink(`${this.prefix}${key}`, fn)
   }
 
   /**
@@ -139,7 +139,7 @@ class RedisStore {
       let count = data.length
       if (count === 0) return fn(null, null)
       data.forEach((key) => {
-        this.client.del(key, (err) => {
+        this.client.unlink(key, (err) => {
           if (err) {
             count = 0
             return fn(err)
