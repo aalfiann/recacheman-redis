@@ -138,8 +138,8 @@ class RedisStore {
       if (err) return fn(err)
       let count = data.length
       if (count === 0) return fn(null, null)
-      data.forEach((key) => {
-        this.client.unlink(key, (err) => {
+      for (var i = 0; i < count; i++) {
+        this.client.unlink(data[i], (err) => {
           if (err) {
             count = 0
             return fn(err)
@@ -148,7 +148,7 @@ class RedisStore {
             fn(null, null)
           }
         })
-      })
+      }
     })
   }
 

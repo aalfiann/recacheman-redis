@@ -34,7 +34,7 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test1', (err, data) => {
         if (err) return done(err)
-        assert.equal(data.a, 1)
+        assert.strictEqual(data.a, 1)
         done()
       })
     })
@@ -79,12 +79,12 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test5', (err, data) => {
         if (err) return done(err)
-        assert.equal(data, value)
+        assert.strictEqual(data, value)
         cache.del('test5', (err) => {
           if (err) return done(err)
           cache.get('test5', (err, data) => {
             if (err) return done(err)
-            assert.equal(data, null)
+            assert.strictEqual(data, null)
             done()
           })
         })
@@ -98,12 +98,12 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test6', (err, data) => {
         if (err) return done(err)
-        assert.equal(data, value)
+        assert.strictEqual(data, value)
         cache.clear((err) => {
           if (err) return done(err)
           cache.get('test6', (err, data) => {
             if (err) return done(err)
-            assert.equal(data, null)
+            assert.strictEqual(data, null)
             done()
           })
         })
@@ -118,7 +118,7 @@ describe('cacheman-redis', () => {
       setTimeout(() => {
         cache.get('test7', (err, data) => {
           if (err) return done(err)
-          assert.equal(data, null)
+          assert.strictEqual(data, null)
           done()
         })
       }, 1100)
@@ -132,7 +132,7 @@ describe('cacheman-redis', () => {
       setTimeout(() => {
         cache.get('test8', (err, data) => {
           if (err) return done(err)
-          assert.deepEqual(data, { a: 1 })
+          assert.deepStrictEqual(data, { a: 1 })
           done()
         })
       }, 1000)
@@ -164,8 +164,8 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test9', (err, data) => {
         if (err) return done(err)
-        assert.equal(data.a, 1)
-        assert.equal(cache.client.selected_db, 6)
+        assert.strictEqual(data.a, 1)
+        assert.strictEqual(cache.client.selected_db, 6)
         done()
       })
     })
@@ -177,8 +177,8 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test10', (err, data) => {
         if (err) return done(err)
-        assert.equal(data.a, 1)
-        assert.equal(cache.client.selected_db, 5)
+        assert.strictEqual(data.a, 1)
+        assert.strictEqual(cache.client.selected_db, 5)
         done()
       })
     })
@@ -191,7 +191,7 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test11', (err, data) => {
         if (err) return done(err)
-        assert.equal(data.a, 1)
+        assert.strictEqual(data.a, 1)
         done()
       })
     })
@@ -204,7 +204,7 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test12', (err, data) => {
         if (err) return done(err)
-        assert.equal(data.a, 1)
+        assert.strictEqual(data.a, 1)
         done()
       })
     })
@@ -238,16 +238,16 @@ describe('cacheman-redis', () => {
 
     items.forEach((obj, index) => {
       cache.set(obj.key, obj.data, (err) => {
-        assert.deepEqual(null, err)
+        assert.deepStrictEqual(null, err)
       })
     })
 
     cache.scan(0, 20, (err, result) => {
-      assert.deepEqual(null, err)
-      assert.equal(result.cursor, 0)
+      assert.deepStrictEqual(null, err)
+      assert.strictEqual(result.cursor, 0)
 
       const entries = result.entries.sort(compare)
-      assert.deepEqual(items, entries)
+      assert.deepStrictEqual(items, entries)
       done()
     })
   })
