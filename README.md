@@ -4,7 +4,7 @@
 - Fixing all vulnerables
 - Up to date
 
-# cacheman-redis
+# recacheman-redis
 
 [![NPM](https://nodei.co/npm/recacheman-redis.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/recacheman-redis/)  
   
