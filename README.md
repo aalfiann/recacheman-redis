@@ -1,7 +1,6 @@
 > This is a fork version of [cacheman-redis](https://github.com/cayasso/cacheman-redis) with following differences :
-- Minimum NodeJS 10
+- Minimum NodeJS 12
 - Removed old libraries
-- Fixing all vulnerables
 - Up to date
 
 # recacheman-redis
@@ -86,6 +85,11 @@ var cache = new CachemanRedis(client);
 
 // or
 cache = new CachemanRedis({ client: client });
+```
+
+Or pass a redis `client` directly with connection uri:
+```javascript
+var cache = new CachemanRedis({ client: 'redis://localhost:6379' });
 ```
 
 ### cache.set(key, value, [ttl, [fn]])

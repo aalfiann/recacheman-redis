@@ -33,7 +33,11 @@ class RedisStore {
     if ('function' === typeof setex) {
       this.client = options
     } else if (client) {
-      this.client = client
+      if ('string' === typeof client) {
+        this.client = redis.createClient(client)
+      } else {
+        this.client = client
+      }
     } else if (!port && !host) {
       this.client = redis.createClient()
     } else {
