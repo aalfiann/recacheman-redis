@@ -164,9 +164,14 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test9', (err, data) => {
         if (err) return done(err)
-        assert.strictEqual(data.a, 1)
-        assert.strictEqual(cache.client.selected_db, 6)
-        done()
+        connection.database = 0
+        cache2 = new Cache(connection)
+        cache2.get('test9', (err, data2) => {
+          if (err) return done(err)
+          assert.strictEqual(data.a, 1) // data exist on database 6
+          assert.strictEqual(data2, null) // data not exist on database 0 or default database
+          done()
+        })
       })
     })
   })
@@ -177,9 +182,14 @@ describe('cacheman-redis', () => {
       if (err) return done(err)
       cache.get('test10', (err, data) => {
         if (err) return done(err)
-        assert.strictEqual(data.a, 1)
-        assert.strictEqual(cache.client.selected_db, 5)
-        done()
+        connection.database = 0
+        cache2 = new Cache(connection)
+        cache2.get('test9', (err, data2) => {
+          if (err) return done(err)
+          assert.strictEqual(data.a, 1) // data exist on database 5
+          assert.strictEqual(data2, null) // data not exist on database 0 or default database
+          done()
+        })
       })
     })
   })
@@ -199,6 +209,18 @@ describe('cacheman-redis', () => {
 
   it('should allow passing redis client as connection uri', (done) => {
     cache = new Cache({ client: 'redis://localhost:6379' })
+    cache.set('test11', { a: 1 }, (err) => {
+      if (err) return done(err)
+      cache.get('test11', (err, data) => {
+        if (err) return done(err)
+        assert.strictEqual(data.a, 1)
+        done()
+      })
+    })
+  })
+
+  it('should allow passing redis client as object', (done) => {
+    cache = new Cache({ client: { url: 'redis://localhost:6379'} })
     cache.set('test11', { a: 1 }, (err) => {
       if (err) return done(err)
       cache.get('test11', (err, data) => {

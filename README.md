@@ -1,6 +1,7 @@
 > This is a fork version of [cacheman-redis](https://github.com/cayasso/cacheman-redis) with following differences :
-- Minimum NodeJS 12
+- Minimum NodeJS 14
 - Removed old libraries
+- Typescript support
 - Up to date
 
 # recacheman-redis
@@ -22,6 +23,10 @@ Redis standalone caching library for Node.JS and also cache engine for [recachem
 ``` bash
 $ npm install recacheman-redis
 ```
+
+> Important:  
+  If you are using NodeJS 12.x or below, you have to use old [recacheman-redis 2.x](https://github.com/aalfiann/recacheman-redis/tags) and use version <= 2.x of it.  
+  This new version of recacheman-redis already using the latest [redis 4.x](https://github.com/redis/node-redis) library.
 
 ## Usage
 
@@ -59,6 +64,10 @@ cache.set('my key', { foo: 'bar' }, function (error) {
 
 Create `cacheman-redis` instance. `options` are redis valid options including `port` and `host`.
 
+Note: 
+- Redis 4.x actualy has removed `port` and `host` options, but I still keep support it in this library.
+- For more details, please see here >> [Redis 4.x Client Configuration Options](https://github.com/redis/node-redis/blob/master/docs/client-configuration.md).
+
 ```javascript
 var options = {
   port: 9999,
@@ -74,6 +83,12 @@ You can also pass a redis connection string as first arguments like this:
 
 ```javascript
 var cache = new CachemanRedis('redis://127.0.0.1:6379');
+```
+
+Or pass a redis connection string as object like this:
+
+```javascript
+var cache new CachemanRedis({ url: 'redis://localhost:6379'})
 ```
 
 Or pass a redis `client` instance directly as client:

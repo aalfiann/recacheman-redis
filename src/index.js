@@ -28,21 +28,29 @@ class RedisStore {
       options = parse(options)
     }
 
-    const { port, host, client, setex, password, database, prefix } = options
+    const { url, port, host, client, setex, password, database, prefix } = options
 
     if ('function' === typeof setex) {
       this.client = options
     } else if (client) {
       if ('string' === typeof client) {
+        this.client = redis.createClient({ url: client })
+      } else if ('object' === typeof client) {
         this.client = redis.createClient(client)
       } else {
+        // fallback if type is not detected
         this.client = client
       }
     } else if (!port && !host) {
       this.client = redis.createClient()
     } else {
       const opts = Object.assign({}, options, { prefix: null })
-      this.client = redis.createClient(port, host, opts)
+      
+      if (!url) {
+        opts.url = 'redis://' + host + ':' + port
+      }
+
+      this.client = redis.createClient(opts)
     }
 
     if (password) {
@@ -58,6 +66,8 @@ class RedisStore {
     }
 
     this.prefix = prefix || 'cacheman:'
+    
+    this.client.connect()
   }
 
   /**
@@ -70,8 +80,7 @@ class RedisStore {
 
   get(key, fn = noop) {
     const k = `${this.prefix}${key}`
-    this.client.get(k, (err, data) => {
-      if (err) return fn(err)
+    this.client.get(k).then(data => {
       if (!data) return fn(null, null)
       data = data.toString()
       try {
@@ -79,6 +88,8 @@ class RedisStore {
       } catch (e) {
         fn(e)
       }
+    }).catch(err => {
+      return fn(err)
     })
   }
 
@@ -106,15 +117,21 @@ class RedisStore {
       return fn(e)
     }
 
-    const cb = (err) => {
-      if (err) return fn(err)
-      fn(null, val)
-    }
-
     if (-1 === ttl) {
-      this.client.set(k, val, cb)
+      this.client.set(k, val).then(data => {
+        return fn(null, data)
+      }).catch(err => {
+        return fn(err)
+      })
     } else {
-      this.client.setex(k, ttl || 60, val, cb)
+      this.client.set(k, val, {
+        EX: ttl || 60,
+        NX: false
+      }).then(data => {
+        return fn(null, data)
+      }).catch(err => {
+        return fn(err)
+      })
     }
   }
 
@@ -127,7 +144,12 @@ class RedisStore {
    */
 
   del(key, fn = noop) {
-    this.client.unlink(`${this.prefix}${key}`, fn)
+    const k = `${this.prefix}${key}`
+    this.client.sendCommand(['UNLINK', `${k}`]).then(() => {
+      return fn(null, null)
+    }).catch(err => {
+      return fn(err)
+    })
   }
 
   /**
@@ -138,21 +160,22 @@ class RedisStore {
    */
 
   clear(fn = noop) {
-    this.client.keys(`${this.prefix}*`, (err, data) => {
-      if (err) return fn(err)
+    const k = `${this.prefix}*`
+    this.client.sendCommand(['KEYS', `${k}`]).then((data) => {
       let count = data.length
       if (count === 0) return fn(null, null)
       for (var i = 0; i < count; i++) {
-        this.client.unlink(data[i], (err) => {
-          if (err) {
-            count = 0
-            return fn(err)
-          }
+        this.client.sendCommand(['UNLINK', `${data[i]}`]).then(() => {
           if (--count == 0) {
             fn(null, null)
           }
+        }).catch(err => {
+          count = 0
+          return fn(err)
         })
       }
+    }).catch(err => {
+      return fn(err)
     })
   }
 
@@ -170,9 +193,7 @@ class RedisStore {
     const prefix = this.prefix
     const self = this
 
-    this.client.scan(cursor, 'MATCH', `${prefix}*`, 'COUNT', count, (err, data) => {
-      if (err) return fn(err)
-
+    this.client.sendCommand(['SCAN', `${cursor}`, 'MATCH', `${prefix}*`, 'COUNT', `${count}`]).then((data) => {
       const [newCursor, keys] = data
 
       each(keys).call((key, index, next) => {
@@ -187,6 +208,8 @@ class RedisStore {
       }).next(() => {
         fn(null, { cursor: Number(newCursor), entries })
       })
+    }).catch(err => {
+      return fn(err)
     })
   }
 }
