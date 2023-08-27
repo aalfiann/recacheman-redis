@@ -9,7 +9,7 @@
 [![NPM](https://nodei.co/npm/recacheman-redis.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/recacheman-redis/)  
   
 [![npm version](https://img.shields.io/npm/v/recacheman-redis.svg?style=flat-square)](https://www.npmjs.org/package/recacheman-redis)
-[![Build Status](https://travis-ci.com/aalfiann/recacheman-redis.svg?branch=master)](https://travis-ci.com/aalfiann/recacheman-redis)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/aalfiann/recacheman-redis/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/aalfiann/recacheman-redis/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/aalfiann/recacheman-redis/badge.svg?branch=master)](https://coveralls.io/github/aalfiann/recacheman-redis?branch=master)
 [![Known Vulnerabilities](https://snyk.io//test/github/aalfiann/recacheman-redis/badge.svg?targetFile=package.json)](https://snyk.io//test/github/aalfiann/recacheman-redis?targetFile=package.json)
 ![License](https://img.shields.io/npm/l/recacheman-redis)
