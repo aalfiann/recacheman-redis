@@ -9,6 +9,7 @@ jobs:
   build:
     docker:
       - image: cimg/node:16.19.0   # Primary execution image
+      - image: cimg/redis:6.2.6
     steps:
       - checkout
       - run:

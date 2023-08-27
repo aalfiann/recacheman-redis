@@ -25,7 +25,7 @@ $ npm install recacheman-redis
 ```
 
 > Important:  
-  If you are using NodeJS 12.x or below, you have to use old [recacheman-redis 2.x](https://github.com/aalfiann/recacheman-redis/tags) and use version <= 2.x of it.  
+  If you are using NodeJS 12.x or below, you have to use old [recacheman-redis 2.x](https://github.com/aalfiann/recacheman-redis/tags).  
   This new version of recacheman-redis already using the latest [redis 4.x](https://github.com/redis/node-redis) library.
 
 ## Usage
