@@ -1,6 +1,6 @@
 {
   "name": "recacheman-redis",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Redis standalone caching library for Node.JS and also cache engine for Cacheman",
   "author": "Jonathan Brumley <cayasso@gmail.com>",
   "main": "./src/index.js",
@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "each": "1.2.1",
-    "parse-redis-url": "0.0.2",
     "redis": "^4.6.8"
   }
 }

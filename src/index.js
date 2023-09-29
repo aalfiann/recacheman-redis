@@ -5,14 +5,12 @@
  */
 
 const redis = require('redis')
-const parser = require('parse-redis-url')
 const each = require('each')
 
 /**
  * Module constants.
  */
 
-const parse = parser(redis).parse
 const noop = () => {}
 
 class RedisStore {
@@ -25,7 +23,14 @@ class RedisStore {
 
   constructor(options = {}) {
     if ('string' === typeof options) {
-      options = parse(options)
+      const url = new URL(options)
+      const redisParser = {}
+      redisParser.host = url.hostname
+      redisParser.port = url.port
+      redisParser.username = url.username
+      redisParser.password = url.password
+      if(url.pathname) redisParser.database = parseInt(url.pathname.substring(1))
+      options = redisParser
     }
 
     const { url, port, host, client, setex, password, database, prefix } = options
