@@ -9,7 +9,7 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "scripts": {
-    "test": "npm run test:typescript && c8 --reporter=html --reporter=text mocha --exit",
+    "test": "npm run test:typescript && c8 --reporter=html --reporter=text --reporter=text-summary mocha --exit",
     "test:typescript": "tsd"
   },
   "repository": {
