@@ -5,7 +5,7 @@
  */
 
 const redis = require('redis')
-const each = require('each')
+const pLimit = require('p-limit').default
 
 /**
  * Module constants.
@@ -193,29 +193,43 @@ class RedisStore {
    * @api public
    */
 
-  scan(cursor, count = 10, fn = noop) {
-    const entries = []
-    const prefix = this.prefix
-    const self = this
+  scan(cursor, count = 10, fn) {
+    const prefix = this.prefix;
+    const limit = pLimit(10);
 
-    this.client.sendCommand(['SCAN', `${cursor}`, 'MATCH', `${prefix}*`, 'COUNT', `${count}`]).then((data) => {
-      const [newCursor, keys] = data
+    const promise = this.client
+      .sendCommand(['SCAN', `${cursor}`, 'MATCH', `${prefix}*`, 'COUNT', `${count}`])
+      .then(async ([newCursor, keys]) => {
+        if (!keys.length) {
+          return { cursor: Number(newCursor), entries: [] };
+        }
 
-      each(keys).call((key, index, next) => {
-        const _key = key.replace(`${this.prefix}`, '')
+        const results = await Promise.all(
+          keys.map((key) =>
+            limit(() =>
+              new Promise((resolve, reject) => {
+                const _key = key.replace(prefix, '');
+                this.get(_key, (err, data) => {
+                  if (err) return reject(err);
+                  resolve({ key: _key, data });
+                });
+              })
+            )
+          )
+        );
 
-        self.get(_key, (err, data) => {
-          if (err) return fn(err)
+        const entries = results
+          .filter(Boolean)
+          .sort((a, b) => a.key.localeCompare(b.key));
 
-          entries.push({ key: _key, data })
-          next()
-        })
-      }).next(() => {
-        fn(null, { cursor: Number(newCursor), entries })
-      })
-    }).catch(err => {
-      return fn(err)
-    })
+        return { cursor: Number(newCursor), entries };
+      });
+
+    if (typeof fn === 'function') {
+      promise.then(res => fn(null, res)).catch(fn);
+    } else {
+      return promise;
+    }
   }
 }
 

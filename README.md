@@ -1,8 +1,4 @@
-> This is a fork version of [cacheman-redis](https://github.com/cayasso/cacheman-redis) with following differences :
-- Minimum NodeJS 14
-- Removed old libraries
-- Typescript support
-- Up to date
+> This is a fork version of [cacheman-redis](https://github.com/cayasso/cacheman-redis)
 
 # recacheman-redis
 
@@ -10,7 +6,6 @@
   
 [![npm version](https://img.shields.io/npm/v/recacheman-redis.svg?style=flat-square)](https://www.npmjs.org/package/recacheman-redis)
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/aalfiann/recacheman-redis/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/aalfiann/recacheman-redis/tree/master)
-[![Coverage Status](https://coveralls.io/repos/github/aalfiann/recacheman-redis/badge.svg?branch=master)](https://coveralls.io/github/aalfiann/recacheman-redis?branch=master)
 [![Known Vulnerabilities](https://snyk.io//test/github/aalfiann/recacheman-redis/badge.svg?targetFile=package.json)](https://snyk.io//test/github/aalfiann/recacheman-redis?targetFile=package.json)
 ![License](https://img.shields.io/npm/l/recacheman-redis)
 ![NPM download/month](https://img.shields.io/npm/dm/recacheman-redis.svg)
@@ -18,15 +13,17 @@
 
 Redis standalone caching library for Node.JS and also cache engine for [recacheman](https://github.com/aalfiann/recacheman).
 
+| Version | Redis Library | Node.JS |
+|---|---|---|
+| 2.x | 3.x | 10, 12 |
+| 3.x | 4.x | 14, 16, 18 , 20 |
+| 4.x | 5.x | 20, 22 |
+
 ## Instalation
 
 ``` bash
 $ npm install recacheman-redis
 ```
-
-> Important:  
-  If you are using NodeJS 12.x or below, you have to use old [recacheman-redis 2.x](https://github.com/aalfiann/recacheman-redis/tags).  
-  This new version of recacheman-redis already using the latest [redis 4.x](https://github.com/redis/node-redis) library.
 
 ## Usage
 
@@ -65,8 +62,8 @@ cache.set('my key', { foo: 'bar' }, function (error) {
 Create `cacheman-redis` instance. `options` are redis valid options including `port` and `host`.
 
 Note: 
-- Redis 4.x actualy has removed `port` and `host` options, but I still keep support it in this library.
-- For more details, please see here >> [Redis 4.x Client Configuration Options](https://github.com/redis/node-redis/blob/master/docs/client-configuration.md).
+- Since Redis 4.x actualy they're removed `port` and `host` property options, but I still keep support it in this library.
+- For more details, please see here >> [Redis Client Configuration Options](https://github.com/redis/node-redis/blob/master/docs/client-configuration.md).
 
 ```javascript
 var options = {
@@ -183,7 +180,8 @@ npm test
 
 (The MIT License)
 
-Copyright (c) 2014 Jonathan Brumley &lt;cayasso@gmail.com&gt;
+Copyright (c) 2014 Jonathan Brumley &lt;cayasso@gmail.com&gt;,  
+M Abd Aziz Alfian &lt;aalfiann@gmail.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

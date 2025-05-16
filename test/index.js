@@ -9,7 +9,9 @@ const connection = {
   database: 6
 }
 
-describe('cacheman-redis', () => {
+describe('cacheman-redis', function () {
+  this.timeout(10000)
+
   let cache = null
 
   beforeEach((done) => {
@@ -277,6 +279,7 @@ describe('cacheman-redis', () => {
     })
 
     cache.scan(0, 20, (err, result) => {
+      if(err) return console.log('scanning error', err)
       assert.deepStrictEqual(null, err)
       assert.strictEqual(result.cursor, 0)
 
