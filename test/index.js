@@ -209,6 +209,18 @@ describe('cacheman-redis', function () {
     })
   })
 
+  it('should allow passing redis client as connection direct url', (done) => {
+    cache = new Cache({ url: 'redis://localhost:6379' })
+    cache.set('test11', { a: 1 }, (err) => {
+      if (err) return done(err)
+      cache.get('test11', (err, data) => {
+        if (err) return done(err)
+        assert.strictEqual(data.a, 1)
+        done()
+      })
+    })
+  })
+
   it('should allow passing redis client as connection uri', (done) => {
     cache = new Cache({ client: 'redis://localhost:6379' })
     cache.set('test11', { a: 1 }, (err) => {

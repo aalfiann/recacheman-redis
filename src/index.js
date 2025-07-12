@@ -23,6 +23,7 @@ class RedisStore {
 
   constructor(options = {}) {
     if ('string' === typeof options) {
+      const originalUrl = options
       const url = new URL(options)
       const redisParser = {}
       redisParser.host = url.hostname
@@ -30,6 +31,7 @@ class RedisStore {
       redisParser.username = url.username
       redisParser.password = url.password
       if(url.pathname) redisParser.database = parseInt(url.pathname.substring(1))
+      redisParser.url = originalUrl
       options = redisParser
     }
 
