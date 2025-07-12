@@ -22,58 +22,62 @@ class RedisStore {
    */
 
   constructor(options = {}) {
-    if ('string' === typeof options) {
-      const originalUrl = options
-      const url = new URL(options)
-      const redisParser = {}
-      redisParser.host = url.hostname
-      redisParser.port = url.port
-      redisParser.username = url.username
-      redisParser.password = url.password
-      if(url.pathname) redisParser.database = parseInt(url.pathname.substring(1))
-      redisParser.url = originalUrl
+    // If options is a string, treat it as a Redis connection URL
+    if (typeof options === 'string') {
+      const parsedUrl = new URL(options)
+      const redisParser = {
+        host: parsedUrl.hostname,
+        port: parsedUrl.port || 6379,
+        username: parsedUrl.username || undefined,
+        password: parsedUrl.password || undefined,
+        url: options // restore the original URL back into options
+      }
+      if (parsedUrl.pathname && parsedUrl.pathname !== '/') {
+        redisParser.database = parseInt(parsedUrl.pathname.substring(1))
+      }
       options = redisParser
     }
 
     const { url, port, host, client, setex, password, database, prefix } = options
 
-    if ('function' === typeof setex) {
+    if (typeof setex === 'function') {
       this.client = options
     } else if (client) {
-      if ('string' === typeof client) {
+      if (typeof client === 'string') {
         this.client = redis.createClient({ url: client })
-      } else if ('object' === typeof client) {
+      } else if (typeof client === 'object') {
         this.client = redis.createClient(client)
       } else {
-        // fallback if type is not detected
         this.client = client
       }
-    } else if (!port && !host) {
+    } else if (!port && !host && !url) {
       this.client = redis.createClient()
     } else {
       const opts = Object.assign({}, options, { prefix: null })
-      
-      if (!url) {
-        opts.url = 'redis://' + host + ':' + port
+
+      // Fallback if `url` was not explicitly passed
+      if (!url && host && port) {
+        opts.url = `redis://${host}:${port}`
       }
 
       this.client = redis.createClient(opts)
     }
 
-    if (password) {
+    // AUTH (only for legacy usage, since `url` usually handles this)
+    if (password && typeof this.client.auth === 'function') {
       this.client.auth(password, (err) => {
         if (err) throw err
       })
     }
 
-    if (database) {
+    // Select DB index if specified
+    if (database && typeof this.client.select === 'function') {
       this.client.select(database, (err) => {
         if (err) throw err
       })
     }
 
     this.prefix = prefix || 'cacheman:'
-    
     this.client.connect()
   }
 
